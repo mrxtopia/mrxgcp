@@ -1,18 +1,48 @@
 {
   "inbounds": [
     {
-      "port": 8080,
+      "port": PORT_PLACEHOLDER,
       "protocol": "vless",
       "settings": {
         "decryption": "none",
         "clients": [
           {
-            "id": "UUID_PLACEHOLDER"
+            "id": "UUID_1"
+          },
+          {
+            "id": "UUID_2"
+          },
+          {
+            "id": "UUID_3"
+          },
+          {
+            "id": "UUID_4"
+          },
+          {
+            "id": "UUID_5"
+          },
+          {
+            "id": "UUID_6"
+          },
+          {
+            "id": "UUID_7"
+          },
+          {
+            "id": "UUID_8"
+          },
+          {
+            "id": "UUID_9"
+          },
+          {
+            "id": "UUID_10"
           }
         ]
       },
       "streamSettings": {
-        "network": "ws"
+        "network": "ws",
+        "wsSettings": {
+          "path": "/mrx-vless"
+        }
       }
     }
   ],
