@@ -11,34 +11,34 @@
       "settings": {
         "clients": [
           {
-            "id": "UUID_1"
+            "id": "4e7a8b1c-d3f2-4b5a-9c6e-7f8a9b0c1d2e"
           },
           {
-            "id": "UUID_2"
+            "id": "5f8b9c2d-e4a3-5c6b-0d7e-8f9a0b1c2d3e"
           },
           {
-            "id": "UUID_3"
+            "id": "6a9c0d3e-f5b4-6d7c-1e8f-9a0b1c2d3e4f"
           },
           {
-            "id": "UUID_4"
+            "id": "7b0d1e4f-06c5-7e8d-2f9a-0b1c2d3e4f5a"
           },
           {
-            "id": "UUID_5"
+            "id": "8c1e2f5a-17d6-8f9e-3a0b-1c2d3e4f5a6b"
           },
           {
-            "id": "UUID_6"
+            "id": "9d2f3a6b-28e7-9a0f-4b1c-2d3e4f5a6b7c"
           },
           {
-            "id": "UUID_7"
+            "id": "0e3a4b7c-39f8-0b1a-5c2d-3e4f5a6b7c8d"
           },
           {
-            "id": "UUID_8"
+            "id": "1f4b5c8d-4a09-1c2b-6d3e-4f5a6b7c8d9e"
           },
           {
-            "id": "UUID_9"
+            "id": "2a5c6d9e-5b1a-2d3c-7e4f-5a6b7c8d9e0f"
           },
           {
-            "id": "UUID_10"
+            "id": "3b6d7e0f-6c2b-3e4d-8f5a-6b7c8d9e0f1a"
           }
         ],
         "decryption": "none"
