@@ -1,31 +1,35 @@
 #!/bin/sh
 set -e
 
-echo "--- V2Ray Entrypoint Starting ---"
+echo "--- V2Ray Multi-User Entrypoint ---"
 
-# Set the port
 V_PORT=${PORT:-8080}
-echo "Detected Port: $V_PORT"
+echo "Listening on Port: $V_PORT"
+sed -i "s/PORT_PLACEHOLDER/$V_PORT/g" /app/config.json
 
-# Handle UUID
-if [ -z "$UUID" ]; then
-    # Generate random UUID if not provided
-    V_UUID=$(cat /proc/sys/kernel/random/uuid 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 32 | head -n 1 | sed 's/\(.\{8\}\)\(.\{4\}\)\(.\{4\}\)\(.\{4\}\)\(.\{12\}\)/\1-\2-\3-\4-\5/')
-    echo "Using generated random UUID"
-else
-    V_UUID=$UUID
-    echo "Using provided UUID"
+# If a single UUID is provided, use it for the first slot
+if [ -n "$UUID" ] && [ -z "$UUIDS" ]; then
+    UUIDS=$UUID
 fi
 
-# Replace placeholders
-sed -i "s/PORT_PLACEHOLDER/$V_PORT/g" /app/config.json
-sed -i "s/UUID_PLACEHOLDER/$V_UUID/g" /app/config.json
+# Fill up to 10 slots
+IFS=','
+i=1
+for val in $UUIDS; do
+    if [ $i -le 10 ]; then
+        echo "Slot $i: Using provided UUID ($val)"
+        sed -i "s/UUID_$i/$val/g" /app/config.json
+        i=$((i+1))
+    fi
+done
 
-echo "--- Config Verification ---"
-# Check if config is valid JSON (using grep as a simple check)
-grep -q "\"port\": $V_PORT" /app/config.json && echo "Port replacement successful"
-grep -q "$V_UUID" /app/config.json && echo "UUID replacement successful"
+# Fill remaining slots with random UUIDs
+while [ $i -le 10 ]; do
+    R_UUID=$(cat /proc/sys/kernel/random/uuid 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 32 | head -n 1 | sed 's/\(.\{8\}\)\(.\{4\}\)\(.\{4\}\)\(.\{4\}\)\(.\{12\}\)/\1-\2-\3-\4-\5/')
+    echo "Slot $i: Generated random UUID ($R_UUID)"
+    sed -i "s/UUID_$i/$R_UUID/g" /app/config.json
+    i=$((i+1))
+done
 
 echo "--- Starting V2Ray ---"
-# Use exec to let V2Ray be PID 1
 exec ./v2ray run -config /app/config.json
