@@ -1,42 +1,20 @@
 {
+  "log": {
+    "access": "/dev/stdout",
+    "error": "/dev/stderr",
+    "loglevel": "debug"
+  },
   "inbounds": [
     {
       "port": PORT_PLACEHOLDER,
       "protocol": "vless",
       "settings": {
-        "decryption": "none",
         "clients": [
           {
-            "id": "UUID_1"
-          },
-          {
-            "id": "UUID_2"
-          },
-          {
-            "id": "UUID_3"
-          },
-          {
-            "id": "UUID_4"
-          },
-          {
-            "id": "UUID_5"
-          },
-          {
-            "id": "UUID_6"
-          },
-          {
-            "id": "UUID_7"
-          },
-          {
-            "id": "UUID_8"
-          },
-          {
-            "id": "UUID_9"
-          },
-          {
-            "id": "UUID_10"
+            "id": "UUID_PLACEHOLDER"
           }
-        ]
+        ],
+        "decryption": "none"
       },
       "streamSettings": {
         "network": "ws",

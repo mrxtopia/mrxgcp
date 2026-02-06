@@ -1,32 +1,31 @@
 #!/bin/sh
+set -e
 
-# Set the port to listen on (required by Cloud Run)
+echo "--- V2Ray Entrypoint Starting ---"
+
+# Set the port
 V_PORT=${PORT:-8080}
-echo "V2Ray starting on port: $V_PORT"
+echo "Detected Port: $V_PORT"
 
-# Replace the port placeholder
+# Handle UUID
+if [ -z "$UUID" ]; then
+    # Generate random UUID if not provided
+    V_UUID=$(cat /proc/sys/kernel/random/uuid 2>/dev/null || cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 32 | head -n 1 | sed 's/\(.\{8\}\)\(.\{4\}\)\(.\{4\}\)\(.\{4\}\)\(.\{12\}\)/\1-\2-\3-\4-\5/')
+    echo "Using generated random UUID"
+else
+    V_UUID=$UUID
+    echo "Using provided UUID"
+fi
+
+# Replace placeholders
 sed -i "s/PORT_PLACEHOLDER/$V_PORT/g" /app/config.json
+sed -i "s/UUID_PLACEHOLDER/$V_UUID/g" /app/config.json
 
-# Support for up to 10 users
-# If UUIDS is provided as a comma-separated list, use them.
-# Otherwise, generate random ones.
-IFS=','
-i=1
-for uuid in $UUIDS; do
-    if [ $i -le 10 ]; then
-        echo "User $i UUID: $uuid"
-        sed -i "s/UUID_$i/$uuid/g" /app/config.json
-        i=$((i+1))
-    fi
-done
+echo "--- Config Verification ---"
+# Check if config is valid JSON (using grep as a simple check)
+grep -q "\"port\": $V_PORT" /app/config.json && echo "Port replacement successful"
+grep -q "$V_UUID" /app/config.json && echo "UUID replacement successful"
 
-# Fill remaining placeholders with random UUIDs
-while [ $i -le 10 ]; do
-    R_UUID=$(cat /proc/sys/kernel/random/uuid 2>/dev/null || (cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 8 | head -n 1 | tr -d '\n'; echo "-"; cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 4 | head -n 1 | tr -d '\n'; echo "-4"; cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 3 | head -n 1 | tr -d '\n'; echo "-"; cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 4 | head -n 1 | tr -d '\n'; echo "-"; cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 12 | head -n 1))
-    echo "User $i (Random) UUID: $R_UUID"
-    sed -i "s/UUID_$i/$R_UUID/g" /app/config.json
-    i=$((i+1))
-done
-
-# Start V2Ray
-./v2ray run
+echo "--- Starting V2Ray ---"
+# Use exec to let V2Ray be PID 1
+exec ./v2ray run -config /app/config.json
